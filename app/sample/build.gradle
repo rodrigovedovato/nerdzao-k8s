@@ -1,0 +1,99 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+}
+
+plugins {
+    id 'net.researchgate.release' version '2.6.0'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
+    id 'com.palantir.docker' version '0.22.0'
+    id 'scala'
+    id 'application'
+}
+
+group = 'io.github.rodrigovedovato.sample'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+archivesBaseName = "sample"
+
+apply from: "$rootDir/dependencies.gradle"
+
+configurations {
+    compilerPlugin
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+task scalatest(dependsOn: ['testClasses'], type: JavaExec) {
+    main = 'org.scalatest.tools.Runner'
+    args = ['-R', 'build/classes/scala/test', '-o']
+    classpath = sourceSets.test.runtimeClasspath
+}
+
+test.dependsOn scalatest
+
+dependencies {
+    compile libs.COMMON, libs.AKKA, libs.LOGGING, libs.CIRCE
+    testImplementation libs.TEST
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': "io.github.rodrigovedovato.sample.Application"
+        )
+    }
+}
+
+// Caso haja um exceção ao rodar o comando gradle wrapper, remova o application, rode o comando, e coloque novamente ¯\_(ツ)_/¯
+
+application {
+    mainClassName = "io.github.rodrigovedovato.sample.Application"
+}
+
+import com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer
+
+shadowJar {
+    classifier = 'shaded'
+    from {
+        // Exclude provided dependencies and add specific libs
+        (project.configurations.runtime).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    configurations = []
+    zip64 true
+    transform(AppendingTransformer.class) {
+        resource = 'reference.conf'
+    }
+}
+
+artifacts {
+    archives shadowJar
+}
+
+build.dependsOn shadowJar
+
+// Docker build
+docker {
+    name "rdrgvedovato/nerdzao:$version"
+    dockerfile file('src/docker/Dockerfile')
+    buildArgs([VERSION: "$version"])
+    files 'src/docker', tasks.shadowJar.outputs
+    dependsOn shadowJar, jar
+    pull true
+}
+
+wrapper {
+	gradleVersion = '6.0'
+}
+
+// Release
+afterReleaseBuild.dependsOn getTasksByName("dockerPush", true)

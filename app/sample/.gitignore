@@ -1,0 +1,33 @@
+# eclipse
+.settings
+.project
+.classpath
+
+# idea
+*.iml
+*.ipr
+*.iws
+.idea
+out
+
+# maven
+target
+
+# gradle
+bin
+build
+.gradle
+
+# mac
+.store
+.DS_STORE
+
+src/main/avro
+src/main/resources/application.conf
+
+classes/
+
+#vscode
+.vscode
+.metals
+.bloop

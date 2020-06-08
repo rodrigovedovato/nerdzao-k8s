@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nerdzao-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nerdzao
+  replicas: {{ .Values.replicas }}
+  template:
+    metadata:
+      labels:
+        app: nerdzao
+    spec:
+      containers:
+      - name: nginx
+        image: rdrgvedovato/nerdzao:{{ .Chart.AppVersion }}
+        ports:
+        - containerPort: 8080

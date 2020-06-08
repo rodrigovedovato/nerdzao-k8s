@@ -1,0 +1,38 @@
+
+ext {
+    AKKA_VERSION = "2.6.1"
+    AKKA_HTTP_VERSION = "10.1.11"
+    CIRCE_VERSION = "0.12.3"    
+    SCALA_VERSION = "2.13"
+
+    libs = [
+            COMMON: [
+                    "org.slf4j:slf4j-api:1.7.25",
+                    "org.scala-lang:scala-library:2.13.1",
+                    "org.scala-lang.modules:scala-java8-compat_2.13:0.9.0"
+            ],
+            AKKA: [
+                    "com.typesafe.akka:akka-http_$SCALA_VERSION:$AKKA_HTTP_VERSION",
+                    "com.typesafe.akka:akka-stream_$SCALA_VERSION:$AKKA_VERSION",
+                    "com.typesafe.akka:akka-slf4j_$SCALA_VERSION:$AKKA_VERSION"
+            ],
+            LOGGING: [
+                    "ch.qos.logback:logback-classic:1.2.3",
+                    "ch.qos.logback:logback-core:1.2.3"
+            ],
+            CIRCE : [
+                    "io.circe:circe-core_$SCALA_VERSION:$CIRCE_VERSION",
+                    "io.circe:circe-generic_$SCALA_VERSION:$CIRCE_VERSION",
+                    "io.circe:circe-parser_$SCALA_VERSION:$CIRCE_VERSION",
+                    "de.heikoseeberger:akka-http-circe_$SCALA_VERSION:1.29.1",
+                    "io.circe:circe-generic-extras_$SCALA_VERSION:0.12.2",
+            ],            
+            TEST: [
+                    "com.typesafe.akka:akka-http-testkit_$SCALA_VERSION:$AKKA_HTTP_VERSION",
+                    "com.typesafe.akka:akka-testkit_$SCALA_VERSION:$AKKA_VERSION",
+                    "com.typesafe.akka:akka-stream-testkit_$SCALA_VERSION:$AKKA_VERSION",
+                    "org.scalatest:scalatest_$SCALA_VERSION:3.1.0",
+                    "org.mockito:mockito-scala_$SCALA_VERSION:1.7.0"
+            ]
+    ]
+}
